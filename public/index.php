@@ -9,7 +9,8 @@ $config = require __DIR__ . '/../config.php';
 
 $app = new Slim();
 
-$store = new DatabaseStore($config->cache, $config->libguides_site_id, $config->libguides_api_key);
+$cache = \BCLib\DBTracker\Factory::buildCache($config->redis_host, $config->redis_port, $config->redis_db);
+$store = new DatabaseStore($cache, $config->libguides_site_id, $config->libguides_api_key);
 
 $app->get(
     '/.*',

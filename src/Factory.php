@@ -8,20 +8,18 @@ use Doctrine\Common\Cache\RedisCache;
 class Factory
 {
     /**
-     * @param $redis_host
-     * @param $redis_port
-     * @param $redis_db
-     * @return \Doctrine\Common\Cache\Cache
+     * @param $config
+     * @return DatabaseStore
      */
-    public static function buildCache($redis_host, $redis_port, $redis_db)
+    public static function buildStore($config)
     {
-        try {
-            $cache = self::buildRedisCache($redis_host, $redis_port, $redis_db);
-        } catch (\RedisException $e) {
+        if ($config->use_redis) {
+            $cache = self::buildRedisCache($config->redis_host, $config->redis_port, $config->redis_db);
+        } else {
             $cache = new FilesystemCache(__DIR__ . '/../storage');
-            error_log("RedisException: " . $e->getMessage());
         }
-        return $cache;
+        $store = new DatabaseStore($cache, $config->libguides_site_id, $config->libguides_api_key, $config->proxy_url);
+        return $store;
     }
 
     private static function buildRedisCache($host, $port, $db)

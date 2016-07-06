@@ -11,4 +11,6 @@ $config->redis_host = 'localhost';
 $config->redis_port = 6379;
 $config->redis_db = 12;
 
+$config->base_dir = __DIR__;
+
 return $config;

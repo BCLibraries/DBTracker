@@ -13,4 +13,6 @@ $config->redis_db = 12;
 
 $config->base_dir = __DIR__;
 
+$config->proxy_url = 'proxy.bc.edu';
+
 return $config;

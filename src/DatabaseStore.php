@@ -14,17 +14,20 @@ class DatabaseStore
     private $site_id;
 
     private $cache_key;
+    private $proxy_url;
 
     public function __construct(
         Cache $cache,
         $libguides_site_id,
         $libguides_api_key,
+        $proxy_url = false,
         $list_cache_key = 'DBTRACKER_DBLIST'
     ) {
         $this->cache = $cache;
         $this->api_key = $libguides_api_key;
         $this->site_id = $libguides_site_id;
         $this->cache_key = $list_cache_key;
+        $this->proxy_url = $proxy_url;
     }
 
     public function get($callback = null)
@@ -58,7 +61,7 @@ class DatabaseStore
     {
         $output_db = new \stdClass();
         $output_db->short_name = $input_db->name;
-        $output_db->url = $input_db->url;
+        $output_db->url = $input_db->meta->enable_proxy ? $this->proxify($input_db->url) : $input_db->url;
         return $output_db;
     }
 
@@ -80,5 +83,16 @@ class DatabaseStore
 
         // Otherwise, sort alphabetically
         return strcasecmp($db_1->name, $db_2->name);
+    }
+
+    private function proxify($unproxied_url)
+    {
+        $url_parts = parse_url($unproxied_url);
+        if (!$url_parts) {
+            error_log("Couldn't parse URL: $unproxied_url");
+            return $unproxied_url;
+        }
+        $url_parts['host'] = "{$url_parts['host']}.{$this->proxy_url}";
+        return http_build_url($url_parts);
     }
 }

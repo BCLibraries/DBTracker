@@ -58,7 +58,7 @@ class DatabaseStore
     {
         $output_db = new \stdClass();
         $output_db->short_name = $input_db->name;
-        $output_db->url = $input_db->url;
+        $output_db->url = $input_db->meta->enable_proxy === 1 ? $this->proxify($input_db->url) : $input_db->url;
         return $output_db;
     }
 
@@ -80,5 +80,16 @@ class DatabaseStore
 
         // Otherwise, sort alphabetically
         return strcasecmp($db_1->name, $db_2->name);
+    }
+
+    private function proxify($unproxied_url)
+    {
+        $url_parts = parse_url($unproxied_url);
+        if (!$url_parts) {
+            error_log("Couldn't parse URL: $unproxied_url");
+            return $unproxied_url;
+        }
+        $url_parts['host'] = "{$url_parts['host']}.proxy.bc.edu";
+        return http_build_url($url_parts);
     }
 }

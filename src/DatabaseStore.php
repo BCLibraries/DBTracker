@@ -62,6 +62,10 @@ class DatabaseStore
         $output_db = new \stdClass();
         $output_db->short_name = $input_db->name;
         $output_db->url = $input_db->meta->enable_proxy ? $this->proxify($input_db->url) : $input_db->url;
+
+        if (isset($input_db->enable_trial)) {
+            $output_db->enable_trial = true;
+        }
         return $output_db;
     }
 

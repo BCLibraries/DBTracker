@@ -30,7 +30,7 @@ class DatabaseStore
         $this->proxy_url = $proxy_url;
     }
 
-    public function get($callback = null)
+    public function fetchDatabases($callback = null)
     {
         if (!$this->cache->contains($this->cache_key)) {
             $this->refresh();
@@ -52,12 +52,12 @@ class DatabaseStore
         );
         $assets = json_decode($json);
         usort($assets, [$this, 'sortTrialDBsToTop']);
-        $db_output_list = array_map([$this, 'buildDatabaseOutput'], $assets);
+        $db_output_list = array_map([$this, 'buildSingleDatabaseOutput'], $assets);
         $json = json_encode($db_output_list);
         $this->cache->save($this->cache_key, $json);
     }
 
-    private function buildDatabaseOutput($input_db)
+    private function buildSingleDatabaseOutput($input_db)
     {
         $output_db = new \stdClass();
         $output_db->short_name = $input_db->name;

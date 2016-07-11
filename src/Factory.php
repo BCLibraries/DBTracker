@@ -11,7 +11,7 @@ class Factory
      * @param $config
      * @return DatabaseStore
      */
-    public static function buildStore($config)
+    public static function buildDatabaseStore($config)
     {
         if ($config->use_redis) {
             $cache = self::buildRedisCache($config->redis_host, $config->redis_port, $config->redis_db);

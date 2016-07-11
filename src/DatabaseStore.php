@@ -91,12 +91,6 @@ class DatabaseStore
 
     private function proxify($unproxied_url)
     {
-        $url_parts = parse_url($unproxied_url);
-        if (!$url_parts) {
-            error_log("Couldn't parse URL: $unproxied_url");
-            return $unproxied_url;
-        }
-        $url_parts['host'] = "{$url_parts['host']}.{$this->proxy_url}";
-        return http_build_url($url_parts);
+        return "https://proxy.bc.edu/login?url=$unproxied_url";
     }
 }
